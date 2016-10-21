@@ -46,15 +46,15 @@ class PersonController {
 
     }
 
-    def test(){
-
-    }
-
     def demo() {
 
     }
 
     def checkTheme() {
+
+        User user=springSecurityService.currentUser
+        UserRole userRole=UserRole.findByUser(user)
+        render(view: "checkTheme", model: [userRoleObj: userRole])
 
     }
 }

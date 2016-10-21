@@ -1,7 +1,9 @@
 package linkshare.person.topic
 
 import com.User
+import com.UserRole
 import grails.plugin.springsecurity.annotation.Secured
+import linkshare.Enums
 import person.Person
 import resource.LinkResource
 import subscription.Subscription
@@ -18,7 +20,6 @@ class TopicController {
     def showTopics() {
         User user = springSecurityService.currentUser
         Person person = Person.findByUser(user)
-
         render(view: "showTopics", model: [topicList: person.topics])
     }
 
@@ -39,17 +40,17 @@ class TopicController {
                 println("topic saved")
 
                 flash.message = "Topic created"
-                render(view: "/person/checkTheme", model: [name: flash.message])
+                redirect(controller: "person", action: "checkTheme")
             } else {
                 topic.errors.allErrors.each { err ->
                     println(err)
                 }
                 flash.message = "Invalid input"
-                render(view: "/person/checkTheme", model: [name: flash.message])
+                redirect(controller: "person", action: "checkTheme")
             }
         } else {
             flash.message = "Topic already created before"
-            render(view: "/person/checkTheme", model: [name: flash.message])
+            redirect(controller: "person", action: "checkTheme")
         }
     }
 
@@ -69,7 +70,7 @@ class TopicController {
             if (topic.validate()) {
                 topic.save(flush: true)
                 flash.update = "Topic updated succesfully"
-                render(view: "/person/checkTheme", model: [name: flash.update])
+                redirect(controller: "person", action: "checkTheme")
             } else {
                 topic.errors.allErrors.each { err ->
                     println(err)
@@ -88,18 +89,16 @@ class TopicController {
 
     def deleteTopic() {
         Topic topic = Topic.findById(params.name)
-        List<LinkResource> linkResourceList=LinkResource.findAllByTopic(topic)
-        linkResourceList.each {it ->
+        List<LinkResource> linkResourceList = LinkResource.findAllByTopic(topic)
+        linkResourceList.each { it ->
             it.delete(flush: true)
         }
-        List<Subscription> subscriptionList=Subscription.findAllByTopic(topic)
-        subscriptionList.each {it ->
+        List<Subscription> subscriptionList = Subscription.findAllByTopic(topic)
+        subscriptionList.each { it ->
             it.delete(flush: true)
         }
         topic.delete(flush: true)
-        flash.deleteTopic="Topic deleted successfully"
+        flash.deleteTopic = "Topic deleted successfully"
         render(view: "/person/checkTheme", model: [name: flash.deleteTopic])
     }
-
-
 }

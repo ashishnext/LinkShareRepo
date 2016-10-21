@@ -33,14 +33,14 @@ class ResourceController {
             println(Topic.findById(params.selectTopic).topicName)
 
             flash.msg = "Resource shared"
-            render(view: "/person/checkTheme", model: [name: flash.msg])
+            redirect(controller: "person", action: "checkTheme")
         }
         else {
             co.errors.allErrors.each { err ->
                 println(err)
             }
             flash.msg="Invaid input try again"
-            render(view:"/person/checkTheme" , model: [name:flash.msg] )
+            redirect(controller: "person", action: "checkTheme")
         }
     }
 
@@ -57,7 +57,7 @@ class ResourceController {
         if (linkResource.validate()) {
             linkResource.save(flush: true)
             flash.updateRes="Resource updated successfully"
-            render(view: "/person/landing", model: [name: flash.updateRes])
+            redirect(controller: "person", action: "checkTheme")
 
         }
         else {
@@ -71,6 +71,6 @@ class ResourceController {
         LinkResource linkResource=LinkResource.findById(params.id)
         linkResource.delete(flush: true)
         flash.deleteResource="Resource deleted successfully"
-        render(view: "/person/landing", model: [name: flash.deleteResource])
+        redirect(controller: "person", action: "checkTheme")
     }
 }
